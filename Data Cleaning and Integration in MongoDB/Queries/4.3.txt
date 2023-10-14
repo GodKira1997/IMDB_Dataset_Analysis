@@ -1,0 +1,26 @@
+db.Movies.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              startYear: {
+                $exists: true,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: "$startYear",
+          numberOfMovies: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
+        },
+      },
+    ])

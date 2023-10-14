@@ -1,0 +1,53 @@
+db.Movies.aggregate([
+  {
+    $match: {
+      $and: [
+        { genres: { $all: ["Sci-Fi"] } }
+      ]
+    }
+  },
+  {
+    $unwind: "$directors",
+  },
+  {
+    $lookup: {
+      from: "Members",
+      localField: "directors",
+      foreignField: "_id",
+      as: "director_info",
+    },
+  },
+  {
+    $match: {
+      "director_info.name": /James Cameron/,
+    },
+  },
+  {
+    $unwind: "$actors",
+  },
+  {
+    $lookup: {
+      from: "Members",
+      localField: "actors.actor",
+      foreignField: "_id",
+      as: "actors_info",
+    },
+  },
+  {
+    $match: {
+      "actors_info.name": /Sigourney Weaver/,
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      title: 1,
+      director: {
+        $arrayElemAt: ["$director_info.name", 0],
+      },
+      actedBy: {
+        $arrayElemAt: ["$actors_info.name", 0],
+      }
+    }
+  }
+]);

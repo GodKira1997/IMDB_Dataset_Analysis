@@ -1,0 +1,96 @@
+CREATE DATABASE imdb;
+
+\c imdb;
+
+CREATE TABLE Genre (
+	id INT PRIMARY KEY,
+	genre VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE Title (
+	id INT,
+	type TEXT,
+	title TEXT NOT NULL,
+	originalTitle TEXT,
+	startYear INT,
+	endYear INT,
+	runtime INT,
+	avgRating NUMERIC(3,1) CHECK (avgRating >= 0.0 and avgRating <= 10.0),
+	numVotes INT CHECK (numVotes >= 0),
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Title_Genre (
+	title INT,
+	genre INT,
+	PRIMARY KEY (title, genre),
+	FOREIGN KEY (genre)
+	REFERENCES Genre(id),
+	FOREIGN KEY (title)
+	REFERENCES Title(id)
+);
+
+CREATE TABLE Member (
+	id INT,
+	name TEXT NOT NULL,
+	birthYear INT,
+	deathYear INT,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE Title_Actor (
+	title INT,
+	actor INT,
+	PRIMARY KEY (title, actor),
+	FOREIGN KEY (actor)
+	REFERENCES Member(id),
+	FOREIGN KEY (title)
+	REFERENCES Title(id)
+);
+
+CREATE TABLE Character (
+	id INT PRIMARY KEY,
+	character TEXT NOT NULL
+);
+
+CREATE TABLE Actor_Title_Character (
+	title INT,
+	actor INT,
+	character INT,
+	PRIMARY KEY (title, actor, character),
+	FOREIGN KEY (title, actor)
+	REFERENCES Title_Actor(title, actor),
+	FOREIGN KEY (character)
+	REFERENCES Character(id)
+);
+
+
+CREATE TABLE Title_Director (
+	title INT,
+	director INT,
+	PRIMARY KEY (title, director),
+	FOREIGN KEY (director)
+	REFERENCES Member(id),
+	FOREIGN KEY (title)
+	REFERENCES Title(id)
+);
+
+CREATE TABLE Title_Writer (
+	title INT,
+	writer INT,
+	PRIMARY KEY (title, writer),
+	FOREIGN KEY (writer)
+	REFERENCES Member(id),
+	FOREIGN KEY (title)
+	REFERENCES Title(id)
+);
+
+CREATE TABLE Title_Producer (
+	title INT,
+	producer INT,
+	PRIMARY KEY (title, producer),
+	FOREIGN KEY (producer)
+	REFERENCES Member(id),
+	FOREIGN KEY (title)
+	REFERENCES Title(id)
+);

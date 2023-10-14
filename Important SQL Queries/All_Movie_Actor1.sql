@@ -1,0 +1,4 @@
+CREATE VIEW All_Movie_Actor
+AS
+SELECT *
+FROM ActedIn

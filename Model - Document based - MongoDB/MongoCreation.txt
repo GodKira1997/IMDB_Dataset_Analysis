@@ -1,0 +1,53 @@
+db.createCollection("Movies",
+{validator:{
+	"$and": [
+      	{"$jsonSchema": {
+				required: [ "_id", "title" ],
+      			properties: {
+				type: {bsonType: "string"},
+				title: {bsonType: "string"},
+				originalTitle: {bsonType: "string"},
+				startYear: {bsonType: "int",
+						minimum: 0
+						},
+				endYear: {bsonType: "int",
+						minimum: 0
+						},
+				runtime: {bsonType: "int",
+						minimum: 0
+						},
+				avgRating: {bsonType: ["double"]},
+				numVotes: {bsonType: "int",
+						minimum: 0
+						},
+				genres: {bsonType: "array"},
+				actors: {bsonType: "array"},
+				directors: {bsonType: "array"},
+				writers: {bsonType: "array"},
+				producers: {bsonType: "array"}
+          			}
+			}
+      	}
+	]
+	}
+});
+
+db.createCollection("Members",
+{validator:{
+	"$and": [
+      	{"$jsonSchema": {
+				required: [ "_id", "name" ],
+      			properties: {
+				name: {bsonType: "string"},
+				birthYear: {bsonType: "int",
+						minimum: 0
+						},
+				deathYear: {bsonType: "int",
+						minimum: 0
+						}
+          			}
+			}
+      	}
+	]
+	}
+});

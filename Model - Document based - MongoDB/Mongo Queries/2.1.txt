@@ -1,0 +1,62 @@
+db.Movies.aggregate([
+  {
+    $match: {
+      $and: [
+        {
+          startYear: {
+            $ne: "2014",
+          },
+        },
+      ],
+    },
+  },
+  {
+    $unwind: "$actors",
+  },
+  {
+    $lookup: {
+      from: "Members",
+      localField: "actors.actor",
+      foreignField: "_id",
+      as: "actors_info",
+    },
+  },
+  {
+    $match: {
+      $and: [
+        {
+          "actors_info.deathYear": {
+            $exists: false,
+          },
+        },
+        {
+          "actors_info.name": /^Phi/,
+        },
+      ],
+    },
+  },
+  {
+    $project: {
+      id: {
+        $arrayElemAt: ["$actors_info._id", 0],
+      },
+      AliveActor: {
+        $arrayElemAt: ["$actors_info.name", 0],
+      },
+    },
+  },
+  {
+    $group: {
+      _id: {
+        id: "$id",
+        name: "$AliveActor"
+      }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      AliveActor: "$_id.name"
+    }
+  }
+]);

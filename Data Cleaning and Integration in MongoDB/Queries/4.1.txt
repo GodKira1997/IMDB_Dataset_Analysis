@@ -1,0 +1,22 @@
+db.Movies.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              numVotes: {
+                $gt: 10000,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: "$genres",
+      },
+      {
+        $group: {
+          _id: "$genres",
+          avgRatings: {$push: "$avgRating"} 
+        }
+      }
+    ])

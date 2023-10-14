@@ -1,0 +1,3 @@
+db.Movies.createIndex( { startYear: 1 } );
+
+db.Members.createIndex( { name: "text" } );

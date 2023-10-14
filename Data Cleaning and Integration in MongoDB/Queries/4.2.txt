@@ -1,0 +1,34 @@
+db.Movies.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              actors: {
+                $exists: true,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: "$actors"
+      },
+      {
+        $group: {
+          _id: {
+            id: "$_id",
+            genres: "$genres"
+            },
+          numOfActors: { $sum: 1}
+        }
+      },
+      {
+        $unwind: "$_id.genres"
+      },
+      {
+        $group: {
+          _id: "$_id.genres",
+          avgActors: { $avg: "$numOfActors"}
+        }
+      }
+    ])

@@ -1,0 +1,49 @@
+db.Movies.aggregate([
+  {
+    $unwind: "$writers",
+  },
+  {
+    $lookup: {
+      from: "Members",
+      localField: "writers",
+      foreignField: "_id",
+      as: "writer_info",
+    },
+  },
+  {
+    $match: {
+      $and: [
+        {"writer_info.name": /Bhardwaj/},
+        {"writer_info.deathYear": {$exists: false}}
+      ]
+    },
+  },
+  {
+    $project: {
+      writer_id: {
+        $arrayElemAt: ["$writer_info._id", 0],
+      },
+      writer_name: {
+        $arrayElemAt: ["$writer_info.name", 0],
+      },
+      runtime: 1
+    },
+  },
+  {
+    $group: {
+      _id: {
+        id: "$writer_id",
+        name: "$writer_name",
+      },
+      avgRuntime: { $avg: "$runtime" }
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      writer: "$_id.name",
+      avgRuntime: 1,
+    },
+  }
+  
+]);

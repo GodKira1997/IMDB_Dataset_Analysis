@@ -1,0 +1,58 @@
+db.Movies.aggregate([
+  {
+    $match: {
+      $and: [
+        { genres: { $all: ["Talk-Show"] } },
+        { startYear: { $eq: 2017 } },
+      ],
+    },
+  },
+  {
+    $unwind: "$producers",
+  },
+  {
+    $lookup: {
+      from: "Members",
+      localField: "producers",
+      foreignField: "_id",
+      as: "producer_info",
+    },
+  },
+  {
+    $match: {
+      "producer_info.name": /Gill/,
+    },
+  },
+  {
+    $project: {
+      title: 1,
+      producer_id: {
+        $arrayElemAt: ["$producer_info._id", 0],
+      },
+      producer_name: {
+        $arrayElemAt: ["$producer_info.name", 0],
+      },
+    },
+  },
+  {
+    $group: {
+      _id: {
+        id: "$producer_id",
+        name: "$producer_name",
+      },
+      talkshows: { $sum: 1 },
+    },
+  },
+  {
+    $match: {
+      talkshows: { $gt: 50 },
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      producer: "$_id.name",
+      talkshows: 1,
+    },
+  },
+]);
